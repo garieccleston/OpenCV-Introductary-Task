@@ -1,0 +1,163 @@
+// Include files for required libraries
+#include <stdio.h>
+
+#include "opencv_aee.hpp"
+#include "main.hpp"     // You can use this file for declaring defined values and functions
+
+void setup(void)
+{
+    // Setup camera won't work if you don't have a compatible webcam
+    //setupCamera(320, 240);  // Enable the camera for OpenCV
+}
+
+int main( int argc, char** argv )
+{
+    setup();    // Call a setup function to prepare IO and devices
+
+    cv::namedWindow("BlueCar");   // Create a GUI window called photo
+    cv::namedWindow("GreenCar");
+    cv::namedWindow("RedCar");
+    cv::namedWindow("BlueApple");
+    cv::namedWindow("GreenApple");
+    cv::namedWindow("RedApple");
+
+    while(1)    // Main loop to perform image processing
+    {
+        Mat blueCar = imread("BlueCar.png", IMREAD_COLOR);
+        Mat greenCar = imread("GreenCar.png", IMREAD_COLOR);
+        Mat redCar = imread("RedCar.png", IMREAD_COLOR);
+        Mat blueApple = imread("BlueApple.png", IMREAD_COLOR);
+        Mat greenApple = imread("GreenApple.png", IMREAD_COLOR);
+        Mat redApple = imread("RedApple.png", IMREAD_COLOR);
+
+        Mat blueCar_HSV;
+        Mat greenCar_HSV;
+        Mat redCar_HSV;
+        Mat blueApple_HSV;
+        Mat greenApple_HSV;
+        Mat redApple_HSV;
+        Mat image_RED;
+        Mat image_RED1;
+        Mat image_BLUE;
+        Mat image_BLUE1;
+        Mat image_GREEN;
+        Mat image_GREEN1;
+
+        // Blue Car contour
+        Mat eroded;
+        Mat dilated;
+        cvtColor(blueCar, blueCar_HSV, COLOR_BGR2HSV); // Convert the image to HSV
+        inRange(blueCar_HSV, Scalar(90, 50, 70), Scalar(128, 255, 255), image_BLUE);
+
+        Mat spotFilter = cv::getStructuringElement(MORPH_ELLIPSE, Size(5, 5));
+        cv::erode(image_BLUE, eroded, spotFilter);
+        Mat maskMorph = cv::getStructuringElement(MORPH_ELLIPSE, Size(10, 10));
+        cv::dilate(eroded, dilated, maskMorph);
+        std::vector< std::vector<cv::Point> > contours;
+        findContours(dilated, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+
+        for(int i = 0; i < contours.size(); i++)
+            {
+        drawContours( blueCar, contours, i, Scalar(0,0,255), 2, LINE_8, noArray(), 0, Point() );
+        }
+        // Green Car contour
+        Mat eroded1;
+        Mat dilated1;
+        cvtColor(greenCar, greenCar_HSV, COLOR_BGR2HSV); // Convert the image to HSV
+        inRange(greenCar_HSV, Scalar(60, 60, 57), Scalar(70, 255, 255), image_GREEN);
+
+        cv::erode(image_GREEN, eroded1, spotFilter);
+        cv::dilate(eroded1, dilated1, maskMorph);
+        std::vector< std::vector<cv::Point> > contours1;
+        findContours(dilated1, contours1, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+
+        for(int i1 = 0; i1 < contours1.size(); i1++)
+            {
+        drawContours( greenCar, contours1, i1, Scalar(0,0,255), 2, LINE_8, noArray(), 0, Point() );
+        }
+        // Red Car contour
+        Mat eroded2;
+        Mat dilated2;
+        cvtColor(redCar, redCar_HSV, COLOR_BGR2HSV); // Convert the image to HSV
+        inRange(redCar_HSV, Scalar(0, 50, 70), Scalar(30, 255, 255), image_RED);
+
+        cv::erode(image_RED, eroded2, spotFilter);
+        cv::dilate(eroded2, dilated2, maskMorph);
+        std::vector< std::vector<cv::Point> > contours2;
+        findContours(dilated2, contours2, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+
+        for(int i2 = 0; i2 < contours2.size(); i2++)
+            {
+        drawContours( redCar, contours2, i2, Scalar(0,0,255), 2, LINE_8, noArray(), 0, Point() );
+        }
+        // Blue Apple contour
+        Mat eroded3;
+        Mat dilated3;
+        cvtColor(blueApple, blueApple_HSV, COLOR_BGR2HSV); // Convert the image to HSV
+        inRange(blueApple_HSV, Scalar(90, 50, 70), Scalar(128, 255, 255), image_BLUE1);
+
+        cv::erode(image_BLUE1, eroded3, spotFilter);
+        cv::dilate(eroded3, dilated3, maskMorph);
+        std::vector< std::vector<cv::Point> > contours3;
+        findContours(dilated3, contours3, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+
+        for(int i3 = 0; i3 < contours3.size(); i3++)
+            {
+        drawContours( blueApple, contours3, i3, Scalar(0,0,255), 2, LINE_8, noArray(), 0, Point() );
+        }
+        // Green Apple contour
+        Mat eroded4;
+        Mat dilated4;
+        cvtColor(greenApple, greenApple_HSV, COLOR_BGR2HSV); // Convert the image to HSV
+        inRange(greenApple_HSV, Scalar(30, 60, 57), Scalar(70, 255, 255), image_GREEN1);
+
+        cv::erode(image_GREEN1, eroded4, spotFilter);
+        cv::dilate(eroded4, dilated4, maskMorph);
+        std::vector< std::vector<cv::Point> > contours4;
+        findContours(dilated4, contours4, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+
+        for(int i4 = 0; i4 < contours4.size(); i4++)
+        {
+        drawContours( greenApple, contours4, i4, Scalar(0,0,255), 2, LINE_8, noArray(), 0, Point() );
+        }
+        // Red Apple contour
+        Mat eroded5;
+        Mat dilated5;
+        cvtColor(redApple, redApple_HSV, COLOR_BGR2HSV); // Convert the image to HSV
+        inRange(redApple_HSV, Scalar(0, 43, 70), Scalar(14, 255, 255), image_RED1);
+
+        cv::erode(image_RED1, eroded5, spotFilter);
+        cv::dilate(eroded5, dilated5, maskMorph);
+        std::vector< std::vector<cv::Point> > contours5;
+        findContours(dilated5, contours5, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+
+        for(int i5 = 0; i5 < contours5.size(); i5++)
+            {
+        drawContours( redApple, contours5, i5, Scalar(0,0,255), 2, LINE_8, noArray(), 0, Point() );
+        }
+
+        cv::putText(blueCar, "Blue", Point(50,100), FONT_HERSHEY_PLAIN, 1, Scalar(255,255,255), 1);
+        cv::putText(blueApple, "Blue", Point(50,100), FONT_HERSHEY_PLAIN, 1, Scalar(255,255,255), 1);
+        cv::putText(greenCar, "Green", Point(50,100), FONT_HERSHEY_PLAIN, 1, Scalar(255,255,255), 1);
+        cv::putText(greenApple, "Green", Point(50,100), FONT_HERSHEY_PLAIN, 1, Scalar(255,255,255), 1);
+        cv::putText(redCar, "Red", Point(50,100), FONT_HERSHEY_PLAIN, 1, Scalar(255,255,255), 1);
+        cv::putText(redApple, "Red", Point(50,100), FONT_HERSHEY_PLAIN, 1, Scalar(255,255,255), 1);
+
+        cv::imshow("BlueCar", blueCar);
+        cv::imshow("BlueApple", blueApple);
+        cv::imshow("GreenCar", greenCar);
+        cv::imshow("GreenApple", greenApple);
+        cv::imshow("RedCar", redCar);
+        cv::imshow("RedApple", redApple);
+
+        int key = cv::waitKey(1);   // Wait 1ms for a keypress (required to update windows)
+
+        key = (key==255) ? -1 : key;    // Check if the ESC key has been pressed
+        if (key == 27)
+            break;
+	}
+
+	closeCV();  // Disable the camera and close any windows
+
+	return 0;
+}
